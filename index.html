@@ -1,0 +1,305 @@
+<html>
+
+    <head>
+
+        <title>
+
+            ChronoZ Editor
+
+        </title>
+
+        <style>
+
+            body {
+                margin: 0rem;
+                padding: 0rem;
+                background-color: #000;
+                color: #fff;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+        
+        <div style="
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            height: 100%;
+            overflow: hidden;">
+
+            <div style="
+                display: grid;
+                grid-template-rows: max-content 1fr;">
+
+                <div style="
+                    display: grid;
+                    grid-template-columns: repeat(5, max-content) 1fr;">
+
+                    <div style="
+                        padding: 1rem;">
+
+                        <button id="btnNew">
+
+                            New project
+
+                        </button>
+
+                    </div>
+
+                    <div style="
+                        padding: 1rem;">
+
+                        <button id="btnSave">
+
+                            Save project
+
+                        </button>
+
+                    </div>
+
+                    <div style="
+                        padding: 1rem;">
+
+                        <button id="btnLoad">
+
+                            Load project
+
+                        </button>
+
+                    </div>
+
+                    <div style="
+                        padding: 1rem;">
+
+                        <input id="inputName"
+                            placeholder="Project name">
+
+                    </div>
+
+                    <div style="
+                        padding: 1rem;">
+
+                        Song file:
+
+                    </div>
+
+                    <div style="
+                        padding: 1rem;
+                        padding-left: 0rem;">
+
+                        <input id="inputSong"
+                            style="
+                            width: 100%;"
+                            type="file"
+                            accept="audio/*">
+
+                    </div>
+
+                </div>
+
+                <div style="
+                    padding: 1rem;">
+
+                    <iframe id="player"
+                        style="
+                        height: 100%;
+                        width: 100%;"
+                        src="app/"
+                        frameborder="0"></iframe>
+                    
+                </div>
+
+            </div>
+
+            <div style="
+                padding: 1rem;">
+
+                <textarea id="inputEditor"
+                    style="
+                    width: 100%;
+                    height: 100%;
+                    padding: 0.5rem;
+                    line-height: 1.5rem;
+                    overflow-x: auto;
+                    text-wrap: nowrap;
+                    background-color: #333;
+                    color: #fff;"
+                    disabled></textarea>
+
+            </div>
+
+        </div>
+
+    </body>
+
+    <script>
+
+        let btnNew = document.getElementById("btnNew");
+        let btnSave = document.getElementById("btnSave");
+        let btnLoad = document.getElementById("btnLoad");
+        let inputName = document.getElementById("inputName");
+        let inputSong = document.getElementById("inputSong");
+        let player = document.getElementById("player");
+        let inputEditor = document.getElementById("inputEditor");
+
+        fetch("getChart.php").then(res => res.text()).then((data) => {
+            inputEditor.value = data;
+            inputEditor.disabled = false;
+        });
+
+        fetch("getName.php").then(res => res.text()).then((data) => {
+            inputName.value = data;
+        });
+
+        btnNew.addEventListener("click", () => {
+            fetch("server.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    method: "newSong"
+                })
+            }).then(() => {
+                inputName.value = new Date().toISOString().slice(0, 19).replace("T", " ");
+                player.contentWindow.location.reload();
+
+                fetch("getChart.php").then((response) => response.text()).then((data) => {
+                    inputEditor.value = data;
+                    inputEditor.disabled = false;
+                });
+            });
+        });
+
+        btnSave.addEventListener("click", () => {
+            saveChart();
+        });
+
+        btnLoad.addEventListener("click", () => {
+            let input = document.createElement("input");
+            input.type = "file";
+            input.accept = ".json";
+
+            input.addEventListener("change", () => {
+                let reader = new FileReader();
+
+                reader.addEventListener("load", () => {
+                    fetch("server.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            method: "updateName",
+                            data: JSON.parse(reader.result).name
+                        })
+                    }).then(() => {
+                        fetch("getName.php").then(res => res.text()).then((data) => {
+                            inputName.value = data;
+                        })
+                    });
+
+                    fetch("server.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            method: "loadSong",
+                            data: JSON.parse(reader.result).song
+                        })
+                    }).then(() => {
+                        player.contentWindow.location.reload();
+                    })
+
+                    fetch("server.php", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            method: "updateChart",
+                            data: JSON.parse(reader.result).chart
+                        })
+                    }).then(() => {
+                        fetch("getChart.php").then(res => res.text()).then((data) => {
+                            inputEditor.value = data;
+                            inputEditor.disabled = false;
+                        });
+                    });
+                });
+
+                reader.readAsText(input.files[0]);
+            });
+
+            input.click();
+        });
+
+        inputName.addEventListener("input", () => {
+            fetch("server.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    method: "updateName",
+                    data: inputName.value
+                })
+            });
+        });
+
+        inputSong.addEventListener("change", () => {
+            let reader = new FileReader();
+
+            reader.addEventListener("load", () => {
+                fetch("server.php", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        method: "loadSong",
+                        data: reader.result
+                    })
+                }).then(() => {
+                    player.contentWindow.location.reload();
+                })
+            });
+
+            reader.readAsDataURL(inputSong.files[0]);
+        });
+
+        inputEditor.addEventListener("input", () => {
+            fetch("server.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    method: "updateChart",
+                    data: inputEditor.value
+                })
+            });
+        });
+
+        document.addEventListener("keydown", function(event) {
+            if (event.ctrlKey && event.key == "s") {
+                event.preventDefault();
+                saveChart();
+            }
+        });
+
+        function saveChart() {
+            fetch("getDownload.php").then(res => res.json()).then(data => {
+                let a = document.createElement("a");
+                a.href = URL.createObjectURL(new Blob([JSON.stringify(data)]));
+                a.download = inputName.value + ".json";
+                a.click();
+            });
+        }
+
+    </script>
+
+</html>
