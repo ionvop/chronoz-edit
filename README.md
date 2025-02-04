@@ -1,2 +1,2 @@
 # chronoz-edit
-A chart editor for a work-in-progress rhythm game ChronoZ
+A chart editor for a work-in-progress rhythm game ChronoZ, an attempt at recreating the clock-based rhythm game [Compaz](https://www.taptap.io/app/235768) that hasn't had any updates since 2022.
