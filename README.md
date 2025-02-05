@@ -80,7 +80,7 @@ After 4 beat divisons `,,,,`, rotate to -10 degrees at a span of 4 beats easing 
 
 After another 4 beat divisons `,,,,`, set the hour hand speed to 1 (90 degrees per beat) `h1;`, rotate to 360 degrees at a span of 6 beats easing in `r360:6:1;`, move the Y position to 360 at a span of 6 beats easing in `y360:6:1;`, and scale to 50% at a span of 6 beats easing in `s0.5:6:1;`.
 
-After 6 beat divisons `,,,,,,`, rotate to -180 degrees `r-180;` and move the Y position to -360 in an instant `y-360;`, rotate to 0 degrees `r0:2:2;`, move the Y position to 0 at a span of one beat easing out `y0:1:2;`, and scale to 100% at a span of 2 beats easing out `s1:1:2;`.
+After 6 beat divisons `,,,,,,`, rotate to -180 degrees `r-180;` and move the Y position to -360 in an instant `y-360;`, rotate to 0 degrees at a span of 2 beats easing out `r0:2:2;`, move the Y position to 0 at a span of one beat easing out `y0:1:2;`, and scale to 100% at a span of 2 beats easing out `s1:1:2;`.
 
 After 2 beat divisions `,,`, set the hour hand speed to 0.125 (11.25 degrees per beat) `h0.125;`, and apply the note pattern consisting of taps `1,1,,1,,1,,1,`.
 
