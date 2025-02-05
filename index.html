@@ -144,12 +144,12 @@
         let player = document.getElementById("player");
         let inputEditor = document.getElementById("inputEditor");
 
-        fetch("getChart.php").then(res => res.text()).then((data) => {
+        fetch("get.php?method=chart").then(res => res.text()).then((data) => {
             inputEditor.value = data;
             inputEditor.disabled = false;
         });
 
-        fetch("getName.php").then(res => res.text()).then((data) => {
+        fetch("get.php?method=name").then(res => res.text()).then((data) => {
             inputName.value = data;
         });
 
@@ -166,7 +166,7 @@
                 inputName.value = new Date().toISOString().slice(0, 19).replace("T", " ");
                 player.contentWindow.location.reload();
 
-                fetch("getChart.php").then((response) => response.text()).then((data) => {
+                fetch("get.php?method=chart").then((response) => response.text()).then((data) => {
                     inputEditor.value = data;
                     inputEditor.disabled = false;
                 });
@@ -196,7 +196,7 @@
                             data: JSON.parse(reader.result).name
                         })
                     }).then(() => {
-                        fetch("getName.php").then(res => res.text()).then((data) => {
+                        fetch("get.php?method=name").then(res => res.text()).then((data) => {
                             inputName.value = data;
                         })
                     });
@@ -224,7 +224,7 @@
                             data: JSON.parse(reader.result).chart
                         })
                     }).then(() => {
-                        fetch("getChart.php").then(res => res.text()).then((data) => {
+                        fetch("get.php?method=chart").then(res => res.text()).then((data) => {
                             inputEditor.value = data;
                             inputEditor.disabled = false;
                         });
@@ -292,7 +292,7 @@
         });
 
         function saveChart() {
-            fetch("getDownload.php").then(res => res.json()).then(data => {
+            fetch("get.php?method=download").then(res => res.json()).then(data => {
                 let a = document.createElement("a");
                 a.href = URL.createObjectURL(new Blob([JSON.stringify(data)]));
                 a.download = inputName.value + ".json";
