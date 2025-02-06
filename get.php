@@ -3,7 +3,7 @@
 header("Access-Control-Allow-Origin: *");
 
 if (file_exists("name.txt") == false) {
-    file_put_contents("name.txt", "");
+    file_put_contents("name.txt", date("Y-m-d H-i-s"));
 }
 
 if (file_exists("song.txt") == false) {
