@@ -28,7 +28,7 @@ if (isset($_POST["method"])) {
 }
 
 function NewSong() {
-    file_put_contents("name.txt", "");
+    file_put_contents("name.txt", date("Y-m-d H-i-s"));
     file_put_contents("song.txt", "");
     file_put_contents("chart.txt", "");
 }
